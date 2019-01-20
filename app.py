@@ -21,7 +21,7 @@ class List(db.Model):
             'id': self.id,
             'title': self.title,
             'description': self.description,
-            #Items
+            'items': [i.to_dict() for i in self.items],
             'created': self.created,
             'modified': self.modified
         }
@@ -88,26 +88,44 @@ def delete_list(list_id):
     return ('', 204)
 
 # Get All Items From List
-@app.route('/lists/<list_id>/items', methods = ['GET'])
-def get_items(list_id):
-    return 'This is the GET items endpoint for {}'.format(list_id)
+@app.route('/lists/<l_id>/items', methods = ['GET'])
+def get_items(l_id):
+    items = Item.query.filter_by(list_id=l_id).order_by(Item.created).all()
+    return (jsonify({'items': [item.to_dict() for item in items]}), 200)
 
 # Get Single Item From List
-@app.route('/lists/<list_id>/items/<item_id>', methods = ['GET'])
-def get_item(list_id, item_id):
-    return 'This is the GET item {} endpoint for {}'.format(item_id, list_id)
+@app.route('/lists/<l_id>/items/<item_id>', methods = ['GET'])
+def get_item(l_id, item_id):
+    i = Item.query.filter_by(id=item_id,list_id=l_id).first_or_404()
+    return (jsonify(i.to_dict()), 200)
 
 # Create Item From List
-@app.route('/lists/<list_id>/items', methods = ['POST'])
-def create_item(list_id):
-    return 'This is the CREATE items endpoint for {}'.format(list_id)
+@app.route('/lists/<l_id>/items', methods = ['POST'])
+def create_item(l_id):
+    data = request.get_json()
+    i = Item()
+    i.id = str(uuid.uuid4())
+    i.description = data['description']
+    i.status = data['status']
+    i.list_id = l_id
+    db.session.add(i)
+    db.session.commit()
+    return (jsonify(i.to_dict()), 201)
 
 # Update Item From List
-@app.route('/lists/<list_id>/items/<item_id>', methods = ['PUT'])
-def update_item(list_id, item_id):
-    return 'This is the UPDATE item {} endpoint for {}'.format(item_id, list_id)
+@app.route('/lists/<l_id>/items/<item_id>', methods = ['PUT'])
+def update_item(l_id, item_id):
+    data = request.get_json()
+    i = Item.query.filter_by(id=item_id,list_id=l_id).first_or_404()
+    i.description = data['description']
+    i.status = data['status']
+    db.session.commit()
+    return (jsonify(i.to_dict()), 200)
 
 # Delete Item From List
-@app.route('/lists/<list_id>/items/<item_id>', methods = ['DELETE'])
-def delete_item(list_id, item_id):
-    return 'This is the DELETE item {} endpoint for {}'.format(item_id, list_id)
+@app.route('/lists/<l_id>/items/<item_id>', methods = ['DELETE'])
+def delete_item(l_id, item_id):
+    i = Item.query.filter_by(id=item_id,list_id=l_id).first_or_404()
+    db.session.delete(i)
+    db.session.commit()
+    return ('', 204)
