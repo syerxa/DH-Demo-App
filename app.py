@@ -66,6 +66,17 @@ def create_list():
     l.title = data['title']
     l.description = data['description']
     db.session.add(l)
+    
+    # Create Items for List
+    items = data['items']
+    for item in items:
+        i = Item()
+        i.id = str(uuid.uuid4())
+        i.description = item['description']
+        i.status = item['status']
+        i.list_id = l.id
+        db.session.add(i)
+        
     db.session.commit()
     return (jsonify(l.to_dict()), 201)
  
