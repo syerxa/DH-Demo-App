@@ -1,22 +1,62 @@
 from flask import Flask, jsonify, request
-from Models.list import List
+from flask_sqlalchemy import SQLAlchemy
 import uuid
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:2Federate@localhost/dhdemo'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
-db = {}
+### MODELS ###
+class List(db.Model):
+    id = db.Column(db.String(36), primary_key=True)
+    title = db.Column(db.String(80), nullable=False)
+    description = db.Column(db.String(200), nullable=True)
+    items = db.relationship('Item', backref='list', lazy=True)
+    created = db.Column(db.DateTime, server_default=db.func.now())
+    modified = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            #Items
+            'created': self.created,
+            'modified': self.modified
+        }
+    
+class Item(db.Model):
+    id = db.Column(db.String(36), primary_key=True)
+    description = db.Column(db.String(200), nullable=False)
+    status = db.Column(db.String(10), nullable=False)
+    list_id = db.Column(db.String(36), db.ForeignKey('list.id'), nullable=False)
+    created = db.Column(db.DateTime, server_default=db.func.now())
+    modified = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'description': self.description,
+            'status': self.status,
+            'list_id': self.list_id,
+            'created': self.created,
+            'modified': self.modified
+        }
 
+### API CALLS ###
 # Get All Lists
 @app.route('/lists', methods = ['GET'])
 def get_lists():
-    return (jsonify(**db), 200)
+    lists = List.query.order_by(List.created).all();
+    return (jsonify({'lists': [list.to_dict() for list in lists]}), 200)
 
 # Get Single List
 @app.route('/lists/<list_id>', methods = ['GET'])
 def get_list(list_id):
-    l = db[list_id]
-    return (jsonify(l.serialize()), 200)
-
+    l = List.query.filter_by(id=list_id).first_or_404()
+    return (jsonify(l.to_dict()), 200)
+ 
 # Create List
 @app.route('/lists', methods = ['POST'])
 def create_list():
@@ -25,24 +65,26 @@ def create_list():
     l.id = str(uuid.uuid4())
     l.title = data['title']
     l.description = data['description']
-    db[l.id] = l
-    return (jsonify(l.serialize()), 201)
-
+    db.session.add(l)
+    db.session.commit()
+    return (jsonify(l.to_dict()), 201)
+ 
 # Update List
 @app.route('/lists/<list_id>', methods = ['PUT'])
 def update_list(list_id):
     data = request.get_json()
-    l = List()
-    l.id = list_id
+    l = List.query.filter_by(id=list_id).first_or_404()
     l.title = data['title']
     l.description = data['description']
-    db[l.id] = l
-    return (jsonify(l.serialize()), 200)
+    db.session.commit()
+    return (jsonify(l.to_dict()), 200)
 
 # Delete List
 @app.route('/lists/<list_id>', methods = ['DELETE'])
 def delete_list(list_id):
-    db.pop(list_id)
+    l = List.query.filter_by(id=list_id).first_or_404()
+    db.session.delete(l)
+    db.session.commit()
     return ('', 204)
 
 # Get All Items From List
