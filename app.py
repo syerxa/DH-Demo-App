@@ -14,7 +14,7 @@ class List(db.Model):
     description = db.Column(db.String(200), nullable=True)
     items = db.relationship('Item', backref='list', lazy=True)
     created = db.Column(db.DateTime, server_default=db.func.now())
-    modified = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
+    modified = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
     
     def to_dict(self):
         return {
@@ -32,7 +32,7 @@ class Item(db.Model):
     status = db.Column(db.String(10), nullable=False)
     list_id = db.Column(db.String(36), db.ForeignKey('list.id'), nullable=False)
     created = db.Column(db.DateTime, server_default=db.func.now())
-    modified = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
+    modified = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
     
     def to_dict(self):
         return {
