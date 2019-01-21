@@ -43,6 +43,13 @@ class Item(db.Model):
             'created': self.created,
             'modified': self.modified
         }
+    
+### EXCEPTIONS ###
+def not_found(message):
+    return (jsonify({'message': message, 'status_code': 404}), 404)
+
+def bad_request(message):
+    return (jsonify({'message': message, 'status_code': 400}), 400)
 
 ### API CALLS ###
 # Get All Lists
@@ -54,28 +61,48 @@ def get_lists():
 # Get Single List
 @app.route('/lists/<list_id>', methods = ['GET'])
 def get_list(list_id):
-    l = List.query.filter_by(id=list_id).first_or_404()
+    l = List.query.filter_by(id=list_id).first()
+    
+    if l is None:
+        return not_found('Could not locate list with id: {}'.format(list_id))
+    
     return (jsonify(l.to_dict()), 200)
  
 # Create List
 @app.route('/lists', methods = ['POST'])
 def create_list():
     data = request.get_json()
+    
     l = List()
     l.id = str(uuid.uuid4())
-    l.title = data['title']
-    l.description = data['description']
+    if 'title' in data:
+        l.title = data['title']
+    else:
+        return bad_request('List missing required attribute: title')
+    if 'description' in data:
+        l.description = data['description']
     db.session.add(l)
     
     # Create Items for List
-    items = data['items']
-    for item in items:
-        i = Item()
-        i.id = str(uuid.uuid4())
-        i.description = item['description']
-        i.status = item['status']
-        i.list_id = l.id
-        db.session.add(i)
+    if 'items' in data:
+        items = data['items']
+        for item in items:
+            i = Item()
+            i.id = str(uuid.uuid4())
+            if 'description' in item:
+                i.description = item['description']
+            else:
+                return bad_request('Item missing required attribute: description')
+            if 'status' in item:
+                if item['status'] == 'complete' or item['status'] == 'incomplete':
+                    i.status = item['status']
+                else:
+                    return bad_request("Item attribute status does not contain a valid value. " +
+                                       "Valid options are: 'complete' or 'incomplete'")
+            else:
+                i.status = 'incomplete'
+            i.list_id = l.id
+            db.session.add(i)
         
     db.session.commit()
     return (jsonify(l.to_dict()), 201)
@@ -84,16 +111,29 @@ def create_list():
 @app.route('/lists/<list_id>', methods = ['PUT'])
 def update_list(list_id):
     data = request.get_json()
-    l = List.query.filter_by(id=list_id).first_or_404()
-    l.title = data['title']
-    l.description = data['description']
+    l = List.query.filter_by(id=list_id).first()
+    
+    if l is None:
+        return not_found('Could not locate list with id: {}'.format(list_id))
+    
+    if 'title' in data:
+        l.title = data['title']
+    else:
+        return bad_request('List missing required attribute: title')
+    if 'description' in data:
+        l.description = data['description']
+        
     db.session.commit()
     return (jsonify(l.to_dict()), 200)
 
 # Delete List
 @app.route('/lists/<list_id>', methods = ['DELETE'])
 def delete_list(list_id):
-    l = List.query.filter_by(id=list_id).first_or_404()
+    l = List.query.filter_by(id=list_id).first()
+    
+    if l is None:
+        return not_found('Could not locate list with id: {}'.format(list_id))
+    
     db.session.delete(l)
     db.session.commit()
     return ('', 204)
@@ -107,17 +147,33 @@ def get_items(l_id):
 # Get Single Item From List
 @app.route('/lists/<l_id>/items/<item_id>', methods = ['GET'])
 def get_item(l_id, item_id):
-    i = Item.query.filter_by(id=item_id,list_id=l_id).first_or_404()
+    i = Item.query.filter_by(id=item_id,list_id=l_id).first()
+    
+    if i is None:
+        return not_found('Could not locate item with id: {}'.format(item_id))
+    
     return (jsonify(i.to_dict()), 200)
 
 # Create Item From List
 @app.route('/lists/<l_id>/items', methods = ['POST'])
 def create_item(l_id):
     data = request.get_json()
+    
     i = Item()
     i.id = str(uuid.uuid4())
-    i.description = data['description']
-    i.status = data['status']
+    if 'description' in data:
+        i.description = data['description']
+    else:
+        return bad_request('Item missing required attribute: description')
+    if 'status' in data:
+        if data['status'] == 'complete' or data['status'] == 'incomplete':
+            i.status = data['status']
+        else:
+            return bad_request("Item attribute status does not contain a valid value. " +
+                               "Valid options are: 'complete' or 'incomplete'")
+    else:
+        i.status = 'incomplete'
+        
     i.list_id = l_id
     db.session.add(i)
     db.session.commit()
@@ -127,16 +183,33 @@ def create_item(l_id):
 @app.route('/lists/<l_id>/items/<item_id>', methods = ['PUT'])
 def update_item(l_id, item_id):
     data = request.get_json()
-    i = Item.query.filter_by(id=item_id,list_id=l_id).first_or_404()
-    i.description = data['description']
-    i.status = data['status']
+    i = Item.query.filter_by(id=item_id,list_id=l_id).first()
+    
+    if i is None:
+        return not_found('Could not locate item with id: {}'.format(item_id))
+    
+    if 'description' in data:
+        i.description = data['description']
+    else:
+        return bad_request('Item missing required attribute: description')
+    if 'status' in data:
+        if data['status'] == 'complete' or data['status'] == 'incomplete':
+            i.status = data['status']
+        else:
+            return bad_request("Item attribute status does not contain a valid value. " +
+                               "Valid options are: 'complete' or 'incomplete'")
+        
     db.session.commit()
     return (jsonify(i.to_dict()), 200)
 
 # Delete Item From List
 @app.route('/lists/<l_id>/items/<item_id>', methods = ['DELETE'])
 def delete_item(l_id, item_id):
-    i = Item.query.filter_by(id=item_id,list_id=l_id).first_or_404()
+    i = Item.query.filter_by(id=item_id,list_id=l_id).first()
+    
+    if i is None:
+        return not_found('Could not locate item with id: {}'.format(item_id))
+    
     db.session.delete(i)
     db.session.commit()
     return ('', 204)
