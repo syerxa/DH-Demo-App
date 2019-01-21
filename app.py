@@ -1,8 +1,11 @@
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
+from flask_caching import Cache
 import uuid
 
 app = Flask(__name__)
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})
+# Edit following line to configure the location of your mysql db
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:2Federate@localhost/dhdemo'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -54,12 +57,14 @@ def bad_request(message):
 ### API CALLS ###
 # Get All Lists
 @app.route('/lists', methods = ['GET'])
+@cache.cached(timeout=30)
 def get_lists():
     lists = List.query.order_by(List.created).all();
     return (jsonify({'lists': [list.to_dict() for list in lists]}), 200)
 
 # Get Single List
 @app.route('/lists/<list_id>', methods = ['GET'])
+@cache.cached(timeout=30)
 def get_list(list_id):
     l = List.query.filter_by(id=list_id).first()
     
@@ -140,12 +145,14 @@ def delete_list(list_id):
 
 # Get All Items From List
 @app.route('/lists/<l_id>/items', methods = ['GET'])
+@cache.cached(timeout=30)
 def get_items(l_id):
     items = Item.query.filter_by(list_id=l_id).order_by(Item.created).all()
     return (jsonify({'items': [item.to_dict() for item in items]}), 200)
 
 # Get Single Item From List
 @app.route('/lists/<l_id>/items/<item_id>', methods = ['GET'])
+@cache.cached(timeout=30)
 def get_item(l_id, item_id):
     i = Item.query.filter_by(id=item_id,list_id=l_id).first()
     
