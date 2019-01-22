@@ -1,51 +1,12 @@
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_caching import Cache
+from app import create_app, db, cache
+from models.list import List
+from models.item import Item
 import uuid
 
-app = Flask(__name__)
-cache = Cache(app, config={'CACHE_TYPE': 'simple'})
-# Edit following line to configure the location of your mysql db
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:2Federate@localhost/dhdemo'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-
-### MODELS ###
-class List(db.Model):
-    id = db.Column(db.String(36), primary_key=True)
-    title = db.Column(db.String(80), nullable=False)
-    description = db.Column(db.String(200), nullable=True)
-    items = db.relationship('Item', backref='list', lazy=True)
-    created = db.Column(db.DateTime, server_default=db.func.now())
-    modified = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
-    
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'title': self.title,
-            'description': self.description,
-            'items': [i.to_dict() for i in self.items],
-            'created': self.created,
-            'modified': self.modified
-        }
-    
-class Item(db.Model):
-    id = db.Column(db.String(36), primary_key=True)
-    description = db.Column(db.String(200), nullable=False)
-    status = db.Column(db.String(10), nullable=False)
-    list_id = db.Column(db.String(36), db.ForeignKey('list.id'), nullable=False)
-    created = db.Column(db.DateTime, server_default=db.func.now())
-    modified = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
-    
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'description': self.description,
-            'status': self.status,
-            'list_id': self.list_id,
-            'created': self.created,
-            'modified': self.modified
-        }
+app = create_app()
     
 ### EXCEPTIONS ###
 def not_found(message):
