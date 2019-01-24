@@ -34,7 +34,7 @@ pip install flask_testing
 
 ### Installing
 
-Edit line 13 of app/__init__.py to point to your local MySQL database
+Edit line 13 of app/\__init__.py to point to your local MySQL database
 
 ```
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://<username>:<password>@localhost/<database>'
