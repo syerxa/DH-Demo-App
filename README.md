@@ -50,15 +50,13 @@ You can use the included postman collection or the following cURL commands to ac
 ```
 curl -X GET \
   http://localhost:5000/lists \
-  -H 'Postman-Token: 7e14173a-0f4f-4223-9720-d4a8c8c44bb6' \
   -H 'cache-control: no-cache'
 ```
 
 **Get List**
 ```
 curl -X GET \
-  http://localhost:5000/lists/%3Clist_id%3E \
-  -H 'Postman-Token: 9f15e6b8-4298-44e0-8c36-441dca985e93' \
+  http://localhost:5000/lists/<list_id> \
   -H 'cache-control: no-cache'
 ```
 
@@ -67,7 +65,6 @@ curl -X GET \
 curl -X POST \
   http://localhost:5000/lists \
   -H 'Content-Type: application/json' \
-  -H 'Postman-Token: 5af7226a-bdb8-4861-a598-01e60a73631c' \
   -H 'cache-control: no-cache' \
   -d '{
 	"description": "My Todo List",
@@ -85,9 +82,8 @@ curl -X POST \
 **Update List**
 ```
 curl -X PUT \
-  http://localhost:5000/lists/%3Clist_id%3E \
+  http://localhost:5000/lists/<list_id> \
   -H 'Content-Type: application/json' \
-  -H 'Postman-Token: f85a31dc-1b28-4dc1-aa75-a87f422b223b' \
   -H 'cache-control: no-cache' \
   -d '{
 	"description": "My Todo List Updated",
@@ -98,33 +94,29 @@ curl -X PUT \
 **Delete List**
 ```
 curl -X DELETE \
-  http://localhost:5000/lists/%3Clist_d%3E \
-  -H 'Postman-Token: 4e4d67b3-b139-4ca5-854e-1fba37d5aad3' \
+  http://localhost:5000/lists/<list_id> \
   -H 'cache-control: no-cache'
 ```
 
 **Get Items from List**
 ```
 curl -X GET \
-  http://localhost:5000/lists/%3Clist_id%3E/items \
-  -H 'Postman-Token: 2561a46a-d33c-4250-8b07-7dcbbc9e428c' \
+  http://localhost:5000/lists/<list_id>/items \
   -H 'cache-control: no-cache'
 ```
 
 **Get Item**
 ```
 curl -X GET \
-  http://localhost:5000/lists/%3Clist_id%3E/items/%3Citem_id%3E \
-  -H 'Postman-Token: 5dda45b0-2b34-4d8c-8f52-1afd98cefd9e' \
+  http://localhost:5000/lists/<list_id>/items/<item_id> \
   -H 'cache-control: no-cache'
 ```
 
 **Create Item**
 ```
 curl -X POST \
-  http://localhost:5000/lists/%3Clist_id%3E/items \
+  http://localhost:5000/lists/<list_id>/items \
   -H 'Content-Type: application/json' \
-  -H 'Postman-Token: b34618da-a4db-44ad-a61b-cbcb71727ba7' \
   -H 'cache-control: no-cache' \
   -d '{
     "description": "Potatoes",
@@ -135,9 +127,8 @@ curl -X POST \
 **Update Item**
 ```
 curl -X PUT \
-  http://localhost:5000/lists/%3Clist_id%3E/items/%3Citem_id%3E \
+  http://localhost:5000/lists/<list_id>/items/<item_id> \
   -H 'Content-Type: application/json' \
-  -H 'Postman-Token: 434ea445-fa82-43e2-8282-8a1c35b383d0' \
   -H 'cache-control: no-cache' \
   -d '{
     "description": "New Potatoes",
@@ -148,8 +139,7 @@ curl -X PUT \
 **Delete Item**
 ```
 curl -X DELETE \
-  http://localhost:5000/lists/%3Clist_id%3E/items/%3Citem_id%3E \
-  -H 'Postman-Token: c5e2ec0d-56a0-455d-9f08-32e5652c1a1d' \
+  http://localhost:5000/lists/<list_id>/items/<item_id> \
   -H 'cache-control: no-cache'
 ```
 
