@@ -163,9 +163,8 @@ curl -X DELETE \
 
 ## Known Limitations
 
-* Limitation 1
-* Limitation 2
-* Limitation 3
+* Update List does not support the inclusion of Items.  Items can only be updated via the /lists/<list_id>/items/<item_id> endpoint.
+* Fields only have basic validation, which includes required attributes and a valid status.
 
 ## Built With
 
