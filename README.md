@@ -2,13 +2,23 @@
 
 This project is a technical Demo App of a simple ToDo List JSON API using Flask and SQLAlchemy.
 
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
+
+### Clone to project
+
+Clone the project to your local machine
+```
+git clone https://github.com/syerxa/DH-Demo-App.git
+```
+
+
 ### Prerequisites
 
-The following are needed in order to successfully run the app on your local machine
+The following are needed in order to successfully run the app on your local machine.
 
 Create an environment
 ```
@@ -52,6 +62,7 @@ Finally, start the flask server from the root directory.
 FLASK_APP=main.py flask run
 ```
 
+
 ## Running the tests
 
 The unit tests can be run from the root directory with the following command
@@ -59,6 +70,7 @@ The unit tests can be run from the root directory with the following command
 ```
 pytest
 ```
+
 
 ## API Calls
 
@@ -161,10 +173,12 @@ curl -X DELETE \
   -H 'cache-control: no-cache'
 ```
 
+
 ## Known Limitations
 
 * Update List does not support the inclusion of Items.  Items can only be updated via the /lists/<list_id>/items/<item_id> endpoint.
 * Fields only have basic validation, which includes required attributes and a valid status.
+
 
 ## Built With
 
@@ -174,6 +188,7 @@ curl -X DELETE \
 * [PyMySQL](https://pymysql.readthedocs.io/en/latest/) - Python MySQL support
 * [PyTest](https://docs.pytest.org/en/latest/) - Python testing framework
 * [Flask Testing](https://pythonhosted.org/Flask-Testing/) - Flask extension allowing for unit testing utilities
+
 
 ## Author
 
