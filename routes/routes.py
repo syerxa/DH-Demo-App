@@ -39,7 +39,7 @@ def create_list():
     
     l = List()
     l.id = str(uuid.uuid4())
-    if 'title' in data:
+    if 'title' in data and data['title'].strip() != "":
         l.title = data['title']
     else:
         return bad_request('List missing required attribute: title')
@@ -53,7 +53,7 @@ def create_list():
         for item in items:
             i = Item()
             i.id = str(uuid.uuid4())
-            if 'description' in item:
+            if 'description' in item and item['description'].strip() != "":
                 i.description = item['description']
             else:
                 return bad_request('Item missing required attribute: description')
@@ -80,7 +80,7 @@ def update_list(list_id):
     if l is None:
         return not_found('Could not locate list with id: {}'.format(list_id))
     
-    if 'title' in data:
+    if 'title' in data and data['title'].strip() != "":
         l.title = data['title']
     else:
         return bad_request('List missing required attribute: title')
@@ -132,7 +132,7 @@ def create_item(l_id):
     
     i = Item()
     i.id = str(uuid.uuid4())
-    if 'description' in data:
+    if 'description' in data and data['description'] != "":
         i.description = data['description']
     else:
         return bad_request('Item missing required attribute: description')
@@ -165,7 +165,7 @@ def update_item(l_id, item_id):
     if i is None:
         return not_found('Could not locate item with id: {}'.format(item_id))
     
-    if 'description' in data:
+    if 'description' in data and data['description'] != "":
         i.description = data['description']
     else:
         return bad_request('Item missing required attribute: description')
