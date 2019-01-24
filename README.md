@@ -1,6 +1,6 @@
 # DH Demo App - ToDo List API
 
-This project is a technical Demo App of a simple ToDo List JSON API using Flask and SQLAlchemy.
+This project is a technical Demo App of a ToDo List JSON API using Flask and SQLAlchemy.
 
 
 ## Getting Started
@@ -8,7 +8,7 @@ This project is a technical Demo App of a simple ToDo List JSON API using Flask 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 
-### Clone to project
+### Clone the Project
 
 Clone the project to your local machine
 ```
@@ -18,9 +18,9 @@ git clone https://github.com/syerxa/DH-Demo-App.git
 
 ### Prerequisites
 
-The following are needed in order to successfully run the app on your local machine.
+The following steps are needed to successfully run the app on your local machine.
 
-Create an environment
+Create an environment in your project folder
 ```
 python3 -m venv venv
 . venv/bin/activate
@@ -31,7 +31,7 @@ py -3 -m venv venv
 venv\Scripts\activate
 ```
 
-Install the following in your environment
+Install the following in your created environment
 ```
 pip install Flask
 pip install Flask-SQLAlchemy
@@ -42,30 +42,30 @@ pip install flask_testing
 ```
 
 
-### Installing
+### Installing the Project
 
-Edit line 13 of app/\_\_init__.py to point to your local MySQL database
+Edit line 13 of app/\_\_init__.py to point to your local MySQL database.
 
 ```
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://<username>:<password>@localhost/<database>'
 ```
 
-Run the migration.py script to create the tables and seed data in your database.  Run the following command from the root of the project.
+Run the migration.py script to create the tables and seed data in your database.
 
 ```
 python3 migration.py
 ```
 
-Finally, start the flask server from the root directory.
+Finally, start flask from the root directory.
 
 ```
 FLASK_APP=main.py flask run
 ```
 
 
-## Running the tests
+## Running the Tests
 
-The unit tests can be run from the root directory with the following command
+The unit tests can be run from the root directory.
 
 ```
 pytest
@@ -74,9 +74,9 @@ pytest
 
 ## API Calls
 
-You can use the included postman collection or the following cURL commands to access the API endpoints.
+You can use the included Postman collection or the cURL commands below to access the API endpoints.
 
-**Get Lists**
+**Get All Lists**
 ```
 curl -X GET \
   http://localhost:5000/lists \
@@ -128,7 +128,7 @@ curl -X DELETE \
   -H 'cache-control: no-cache'
 ```
 
-**Get Items from List**
+**Get All Items from List**
 ```
 curl -X GET \
   http://localhost:5000/lists/<list_id>/items \
@@ -176,8 +176,8 @@ curl -X DELETE \
 
 ## Known Limitations
 
-* Update List does not support the inclusion of Items.  Items can only be updated via the /lists/<list_id>/items/<item_id> endpoint.
-* Fields only have basic validation, which includes required attributes and a valid status.
+* Update List does not support the inclusion of Items.  Items can be updated via the /lists/<list_id>/items/<item_id> endpoint.
+* Attribute fields only have basic validation, which includes required attribute check and valid status attribute value.
 
 
 ## Built With
