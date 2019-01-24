@@ -10,9 +10,27 @@ These instructions will get you a copy of the project up and running on your loc
 
 The following are needed in order to successfully run the app on your local machine
 
+Create an environment
 ```
-Give examples
+python3 -m venv venv
+. venv/bin/activate
 ```
+or on Windows
+```
+py -3 -m venv venv
+venv\Scripts\activate
+```
+
+Install the following in your environment
+```
+pip install Flask
+pip install Flask-SQLAlchemy
+pip install Flask-Caching
+pip install PyMySQL
+pip install pytest
+pip install flask_testing
+```
+
 
 ### Installing
 
@@ -153,6 +171,10 @@ curl -X DELETE \
 
 * [Flask](http://flask.pocoo.org/) - Python microframework
 * [SQLAlchemy](http://flask-sqlalchemy.pocoo.org/2.3/) - Flask extension allowing for database connections
+* [Flask Caching](https://pythonhosted.org/Flask-Caching/) - Flask extension allowing for backend caching
+* [PyMySQL](https://pymysql.readthedocs.io/en/latest/) - Python MySQL support
+* [PyTest](https://docs.pytest.org/en/latest/) - Python testing framework
+* [Flask Testing](https://pythonhosted.org/Flask-Testing/) - Flask extension allowing for unit testing utilities
 
 ## Author
 
