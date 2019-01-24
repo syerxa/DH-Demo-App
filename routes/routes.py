@@ -125,6 +125,11 @@ def get_item(l_id, item_id):
 def create_item(l_id):
     data = request.get_json()
     
+    #If list doesn't exist return 404
+    l = List.query.filter_by(id=l_id).first()    
+    if l is None:
+        return not_found('Could not locate list with id: {}'.format(l_id))
+    
     i = Item()
     i.id = str(uuid.uuid4())
     if 'description' in data:
@@ -149,8 +154,14 @@ def create_item(l_id):
 @api.route('/lists/<l_id>/items/<item_id>', methods = ['PUT'])
 def update_item(l_id, item_id):
     data = request.get_json()
-    i = Item.query.filter_by(id=item_id,list_id=l_id).first()
     
+    #If list doesn't exist return 404
+    l = List.query.filter_by(id=l_id).first()    
+    if l is None:
+        return not_found('Could not locate list with id: {}'.format(l_id))
+    
+    #If item doesn't exist return 404
+    i = Item.query.filter_by(id=item_id,list_id=l_id).first()
     if i is None:
         return not_found('Could not locate item with id: {}'.format(item_id))
     
@@ -171,8 +182,14 @@ def update_item(l_id, item_id):
 # Delete Item From List
 @api.route('/lists/<l_id>/items/<item_id>', methods = ['DELETE'])
 def delete_item(l_id, item_id):
-    i = Item.query.filter_by(id=item_id,list_id=l_id).first()
     
+    #If list doesn't exist return 404
+    l = List.query.filter_by(id=l_id).first()    
+    if l is None:
+        return not_found('Could not locate list with id: {}'.format(l_id))
+    
+    #If item doesn't exist return 404    
+    i = Item.query.filter_by(id=item_id,list_id=l_id).first()  
     if i is None:
         return not_found('Could not locate item with id: {}'.format(item_id))
     

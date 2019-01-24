@@ -5,7 +5,7 @@ class List(db.Model):
     id = db.Column(db.String(36), primary_key=True)
     title = db.Column(db.String(80), nullable=False)
     description = db.Column(db.String(200), nullable=True)
-    items = db.relationship('Item', backref='list', lazy=True)
+    items = db.relationship('Item', backref='list', lazy=True, cascade="delete")
     created = db.Column(db.DateTime, server_default=db.func.now())
     modified = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
     
